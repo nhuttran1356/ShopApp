@@ -5,6 +5,9 @@ import lombok.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Getter
@@ -30,6 +33,10 @@ public class OrderDTO {
     private String shippingMethod;
     @JsonProperty("shipping_address")
     private String shippingAddress;
+
+    @JsonProperty("shipping_date")
+    private LocalDate shippingDate;
+
     @JsonProperty("payment_method")
     private String paymentMethod;
 

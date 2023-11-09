@@ -40,6 +40,7 @@ public class ProductService implements ProductServiceImpl {
                 .name(productDTO.getName())
                 .price(productDTO.getPrice())
                 .thumbnail(productDTO.getThumbnail())
+                .description(productDTO.getDescription())
                 .category(existingCategory)
                 .build();
         return productRepository.save(newProduct);
@@ -55,18 +56,7 @@ public class ProductService implements ProductServiceImpl {
     public Page<ProductRespone> getAllProduct(PageRequest pageRequest) {
         // page, limit
 
-        return productRepository.findAll(pageRequest).map(productEntity -> {
-            ProductRespone productRespone = ProductRespone.builder()
-                    .name(productEntity.getName())
-                    .price(productEntity.getPrice())
-                    .thumbnail(productEntity.getThumbnail())
-                    .description(productEntity.getDescription())
-                    .categoryId(productEntity.getCategory().getId())
-                    .build();
-            productRespone.setCreateAt(productEntity.getCreatedAt());
-            productRespone.setUpdateAt(productEntity.getUpdatedAt());
-            return productRespone;
-        });
+        return productRepository.findAll(pageRequest).map(ProductRespone::fromProduct);
     }
 
     @Override
@@ -75,7 +65,6 @@ public class ProductService implements ProductServiceImpl {
         if(existingProduct != null){
             existingProduct.setName(productDTO.getName());
             CategoryEntity existingCategory = categoryRepository.findById(productDTO.getCategoryId()).orElseThrow(() -> new DataNotFoundExeption("can not find category with id" + productDTO.getCategoryId()));
-
             existingProduct.setName(productDTO.getName());
             existingProduct.setCategory(existingCategory);
             existingProduct.setPrice(productDTO.getPrice());

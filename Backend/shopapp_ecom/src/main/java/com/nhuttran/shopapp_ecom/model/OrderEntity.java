@@ -3,6 +3,7 @@ package com.nhuttran.shopapp_ecom.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -30,7 +31,7 @@ public class OrderEntity {
     private String note;
 
     @Column(name = "order_date")
-    private LocalDateTime orderDate;
+    private Date orderDate;
     @Column(name = "status", length = 20)
     private String status;
     @Column(name = "total_money")
@@ -40,7 +41,7 @@ public class OrderEntity {
     @Column(name = "shipping_address", length = 200)
     private String shippingAddress;
     @Column(name = "shipping_date")
-    private Date shippingDate;
+    private LocalDate shippingDate;
     @Column(name = "tracking_number", length = 100)
     private String trackingNumber;
 

@@ -1,5 +1,6 @@
 package com.nhuttran.shopapp_ecom.controller;
 
+import com.github.javafaker.Faker;
 import com.nhuttran.shopapp_ecom.dto.CategoryDTO;
 import com.nhuttran.shopapp_ecom.dto.ProductDTO;
 import com.nhuttran.shopapp_ecom.dto.ProductImageDTO;
@@ -57,15 +58,24 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable long id) {
-
-        return new ResponseEntity<>("product id" + id, HttpStatus.OK);
+    public ResponseEntity<?> getProductById(@PathVariable("id") Long productId) {
+        try {
+            ProductEntity existingProduct = productService.getProductById(productId);
+            return ResponseEntity.ok(ProductRespone.fromProduct(existingProduct));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable long id) {
+    public ResponseEntity<?> deleteProduct(@PathVariable("id") long productId) {
+        try {
+            productService.deleteProduct(productId);
+            return new ResponseEntity<>("product delete successfully with id" + productId, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
 
-        return new ResponseEntity<>("product delete successfully with id" + id, HttpStatus.OK);
 
     }
 
@@ -77,7 +87,7 @@ public class ProductController {
     ) {
         try {
             if (result.hasErrors()) {
-                String errorMessage = result.getFieldError().getDefaultMessage();
+                String errorMessage = Objects.requireNonNull(result.getFieldError()).getDefaultMessage();
                 return ResponseEntity.badRequest().body(errorMessage);
             }
             //Luu
@@ -88,12 +98,7 @@ public class ProductController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-//    {
-//        "name" : "Iphone 15",
-//            "price" : 2000000,
-//            "description" : "",
-//            "category_id" : 1
-//    }
+
 
     @PostMapping(value = "uploads/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadImages(
@@ -166,5 +171,45 @@ public class ProductController {
     private boolean isImageFile(MultipartFile file) {
         String contentType = file.getContentType();
         return contentType != null && contentType.startsWith("image/");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProduct(@PathVariable("id") long id,
+                                           @Valid @RequestBody ProductDTO productDTO){
+
+        try {
+            ProductEntity updateProduct = productService.updateProduct(id, productDTO);
+            return ResponseEntity.ok(updateProduct);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
+    }
+
+    //Tao du lieu
+//    @PostMapping("/generafakeproducts")
+    public ResponseEntity<?> generaFakeProducts(){
+        Faker faker = new Faker();
+        for(int i = 0; i < 50; i++){
+
+            String productName = faker.commerce().productName();
+            if(productService.existByName(productName)){
+                continue;
+            }
+
+            ProductDTO productDTO = ProductDTO.builder()
+                    .name(productName)
+                    .price((float) faker.number().numberBetween(0, 10000000))
+                    .description(faker.lorem().sentence())
+                    .categoryId((long)faker.number().numberBetween(3,6))
+                    .thumbnail("")
+                    .build();
+            try {
+                productService.createProduct(productDTO);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+        }
+        return ResponseEntity.ok("Fake products created successfully");
     }
 }
