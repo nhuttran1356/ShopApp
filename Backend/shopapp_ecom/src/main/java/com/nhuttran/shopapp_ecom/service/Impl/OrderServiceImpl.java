@@ -12,7 +12,7 @@ public interface OrderServiceImpl {
 
     OrderEntity getOrder(Long id);
 
-    OrderEntity updateOrder(Long id, OrderDTO orderDTO);
+    OrderEntity updateOrder(Long id, OrderDTO orderDTO) throws DataNotFoundExeption;
 
     void deleteOrder(Long id);
 

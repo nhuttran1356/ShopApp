@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -60,21 +61,40 @@ public class OrderService implements OrderServiceImpl {
 
     @Override
     public OrderEntity getOrder(Long id) {
-        return null;
+        return orderRepository.findById(id).orElse(null);
     }
 
     @Override
-    public OrderEntity updateOrder(Long id, OrderDTO orderDTO) {
-        return null;
+    public OrderEntity updateOrder(Long id, OrderDTO orderDTO) throws DataNotFoundExeption {
+        OrderEntity order = orderRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundExeption("Can not find order with id " + id));
+        UserEntity existingUser = userRepository.findById(orderDTO.getUserId())
+                .orElseThrow(() -> new DataNotFoundExeption("Can not find user with id " + id));
+
+        //mapper
+        modelMapper.typeMap(OrderDTO.class, OrderEntity.class)
+                .addMappings(mapper -> mapper.skip(OrderEntity::setId));
+
+        //update order
+        modelMapper.map(orderDTO, order);
+        order.setUser(existingUser);
+        return orderRepository.save(order);
+
     }
 
     @Override
     public void deleteOrder(Long id) {
+        OrderEntity order = orderRepository.findById(id).orElse(null);
+        // Xoa mem
+        if(order != null) {
+            order.setActive(false);
+            orderRepository.save(order);
+        }
 
     }
 
     @Override
     public List<OrderEntity> findByUserId(Long userId) {
-        return null;
+        return orderRepository.findByUserId(userId);
     }
 }
