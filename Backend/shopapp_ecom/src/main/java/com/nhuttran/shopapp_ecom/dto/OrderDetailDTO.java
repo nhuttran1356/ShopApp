@@ -10,7 +10,7 @@ import javax.validation.constraints.Min;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDatailDTO {
+public class OrderDetailDTO {
     @Min(value = 1, message = "order_id must be > 0")
     @JsonProperty("order_id")
     private Long orderId;

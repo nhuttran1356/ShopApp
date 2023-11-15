@@ -201,7 +201,7 @@ public class ProductController {
                     .name(productName)
                     .price((float) faker.number().numberBetween(0, 10000000))
                     .description(faker.lorem().sentence())
-                    .categoryId((long)faker.number().numberBetween(3,6))
+                    .categoryId((long)faker.number().numberBetween(0,4))
                     .thumbnail("")
                     .build();
             try {

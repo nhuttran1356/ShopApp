@@ -19,7 +19,7 @@ public class OrderDetailEntity {
 
     private Float price;
     @JoinColumn(name = "number_of_products", nullable = false)
-    private int numberOfProduct;
+    private int numberOfProducts;
     @JoinColumn(name = "total_money", nullable = false)
     private Float totalMoney;
     @JoinColumn(name = "color")
