@@ -6,5 +6,5 @@ import com.nhuttran.shopapp_ecom.model.UserEntity;
 
 public interface UserServiceImpl {
     UserEntity createUser(UserDTO userDTO) throws DataNotFoundExeption;
-    String login(String phoneNumber, String password);
+    String login(String phoneNumber, String password) throws Exception;
 }
